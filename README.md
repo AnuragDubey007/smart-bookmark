@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Bookmark App
 
-## Getting Started
+A simple and secure bookmark manager built as part of a Fullstack micro-challenge.
 
-First, run the development server:
+The app allows users to log in with Google, manage their personal bookmarks, and see updates instantly without page refresh. All data privacy is enforced at the database level.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Live Demo
+https://smart-bookmark-phi-lime.vercel.app
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📦 GitHub Repository
+https://github.com/AnuragDubey007/smart-bookmark
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Features
 
-To learn more about Next.js, take a look at the following resources:
+- Google OAuth authentication (no email/password)
+- Private bookmarks per user
+- Add and delete bookmarks
+- Bookmark list updates without page refresh
+- Secure backend using Row Level Security (RLS)
+- Deployed on Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠 Tech Stack
 
-## Deploy on Vercel
+- **Frontend:** Next.js (App Router), React, Tailwind CSS  
+- **Backend:** Supabase (Auth, PostgreSQL, RLS)  
+- **Authentication:** Google OAuth via Supabase  
+- **Deployment:** Vercel  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔐 Authentication & User Privacy
+
+- Users authenticate using **Google OAuth** through Supabase Auth.
+- Each bookmark row contains a `user_id`.
+- **Row Level Security (RLS)** policies ensure:
+  - Users can only read their own bookmarks
+  - Users can only insert bookmarks for themselves
+  - Users can only delete their own bookmarks
+- No authorization logic is handled on the frontend — the database enforces all access rules.
+
+---
+
+## ⚙️ How the App Works
+
+1. User logs in using Google.
+2. Supabase creates and manages the user session.
+3. After login, the app fetches bookmarks belonging only to the logged-in user.
+4. Users can:
+   - Add a bookmark (title + URL)
+   - Delete their own bookmarks
+5. The UI updates immediately after each action.
+6. The app is deployed on Vercel and configured using environment variables.
+
+---
+
+## 🧠 Challenges Faced & How I Solved Them
+
+### 1. Google OAuth redirect issues after deployment  
+**Problem:**  
+After deploying to Vercel, Google login redirected to `localhost` instead of the production URL.
+
+**Solution:**  
+Updated Supabase **Site URL** and **Redirect URLs** to include the Vercel domain. This ensured Supabase redirected users correctly after authentication in production.
+
+---
+
+### 2. Session not restoring after OAuth login  
+**Problem:**  
+The user was created successfully, but the frontend did not detect the logged-in state.
+
+**Solution:**  
+Used the correct Supabase anon public key and configured the Supabase client with session persistence and PKCE flow to properly restore sessions after OAuth redirects.
+
+---
+
+### 3. Ensuring data privacy between users  
+**Problem:**  
+Preventing one user from accessing another user’s bookmarks.
+
+**Solution:**  
+Implemented Supabase **Row Level Security (RLS)** policies so that all read/write/delete operations are automatically scoped to the authenticated user at the database level.
+
+---
+
+## 🧪 Testing
+
+- Tested login with multiple Google accounts
+- Verified that bookmarks are private to each user
+- Confirmed add/delete functionality
+- Tested production login flow on Vercel
+
+---
+
+## 📌 Notes
+
+- Environment variables are used for Supabase configuration.
+- The project focuses on correctness, security, and clarity over UI polish.
+- The code is intentionally kept simple and readable for easy explanation in interviews.
+
+---
+
+## 👤 Author
+
+**Anurag Dubey**  
+Built as part of a Fullstack & AI/ML Micro-Challenge
