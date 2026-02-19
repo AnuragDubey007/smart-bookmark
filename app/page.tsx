@@ -40,32 +40,39 @@ export default function Home(){
 
     fetchBookmarks();
 
-    const channel = supabase
-    .channel("bookmarks-realtime")
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "bookmarks",
-      },
-      (payload) => {
-        const { eventType, new: newRow, old } = payload;
+    // const channel = supabase
+    // .channel("bookmarks-realtime")
+    // .on(
+    //   "postgres_changes",
+    //   {
+    //     event: "*",
+    //     schema: "public",
+    //     table: "bookmarks",
+    //   },
+    //   (eventType, payload) => {
+    //     const { eventType, new: newRow, old } = payload as any;
 
-        setBookmarks((prev) => {
-          if (eventType === "INSERT") {
-            return [newRow, ...prev];
-          }
+    //     setBookmarks((prev) => {
+    //       if (eventType === "INSERT") {
+    //         return [
+    //           {
+    //             id: newRow.id,
+    //             title: newRow.title,
+    //             url: newRow.url,
+    //           },
+    //           ...prev,
+    //         ];
+    //       }
 
-          if (eventType === "DELETE") {
-            return prev.filter((b) => b.id !== old.id);
-          }
+    //       if (eventType === "DELETE") {
+    //         return prev.filter((b) => b.id !== old.id);
+    //       }
 
-          return prev;
-        });
-      }
-    )
-    .subscribe();
+    //       return prev;
+    //     });
+    //   }
+    // )
+    // .subscribe();
   },[user]);
 
   const fetchBookmarks = async () => {
@@ -80,7 +87,7 @@ export default function Home(){
   };
 
   const addBookmark = async () => {
-    if(!title || !url) return;
+    if(!title || !url || !user) return;
 
     await supabase.from("bookmarks").insert({
       title,
